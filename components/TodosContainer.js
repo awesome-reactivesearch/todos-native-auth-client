@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { ScrollView, StyleSheet, FlatList, StatusBar, Button, Alert } from 'react-native';
 import { View } from 'native-base';
 import { ReactiveList } from '@appbaseio/reactivesearch-native';
+import Auth0 from 'react-native-auth0';
+const auth0 = new Auth0({ domain: 'divyanshu.auth0.com', clientId: '6ZR8Jgj6Gzy1onJhrO0egEbfudIBVZNP' });
 
 import Utils from '../utils';
 import TODO_TYPE from '../types/todo';
@@ -33,9 +35,6 @@ const styles = StyleSheet.create({
 });
 
 const propTypes = {
-  screenProps: PropTypes.shape({
-    todos: TODO_TYPE,
-  }).isRequired,
   screen: PropTypes.oneOf([CONSTANTS.ALL, CONSTANTS.ACTIVE, CONSTANTS.COMPLETED]).isRequired,
 };
 
@@ -52,9 +51,6 @@ export default class TodosContainer extends React.Component {
     // console.log('@onAllData - todos: ', todos);
     // console.log('@onAllData - streamData: ', streamData);
     const todosData = Utils.mergeTodos(todos, streamData);
-
-    // setting todosData in screenProps to be shared between all components
-    this.props.screenProps.todos.data = todosData;
 
     // filter data based on "screen": [All | Active | Completed]
     const filteredData = this.filterTodosData(todosData);
@@ -94,6 +90,21 @@ export default class TodosContainer extends React.Component {
         <ScrollView>
           <Button
             title="Login"
+            onPress={() => {
+              auth0
+                .webAuth
+                .authorize({scope: 'openid profile email', audience: 'https://divyanshu.auth0.com/userinfo'})
+                .then(credentials =>
+                  // Successfully authenticated
+                  // Store the accessToken
+                  auth0
+                    .auth
+                    .userInfo({token: credentials.accessToken})
+                    .then(console.log)
+                    .catch(console.error)
+                )
+                .catch(error => console.log(error));
+            }}
           />
           <ReactiveList
             componentId="ReactiveList"

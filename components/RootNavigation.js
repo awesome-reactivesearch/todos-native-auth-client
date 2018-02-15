@@ -18,11 +18,9 @@ export default class RootNavigator extends React.Component {
   renderStatusBar = () => <StatusBar backgroundColor={COLORS.secondary} barStyle="dark-content" />;
 
   render = () => {
-    const spaceFixer = Platform.OS === 'ios' ? -45 : -80;
-
     return (
       <ReactiveBase app={CONFIG.app} credentials={CONFIG.credentials} type={CONFIG.type}>
-        <Container style={{ marginTop: spaceFixer }}>
+        <Container>
           <RootStackNavigator />
         </Container>
       </ReactiveBase>
