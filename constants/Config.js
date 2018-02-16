@@ -1,7 +1,8 @@
 export default {
     url: 'https://scalr.api.appbase.io',
-    app: 'todomvc-auth',
-    credentials: 'QiqJNlwfU:41a45e61-f761-44fe-947a-6f47de32ae0a',
-    type: 'todo_reactjs',
+    app: 'todos-native-live',
+    credentials: 'gWjqi6btN:085ea323-62ae-4c10-a6b8-79bd2522a1cd',
+    type: 'todos-native-live',
+    server: 'http://localhost:8000'
   };
   

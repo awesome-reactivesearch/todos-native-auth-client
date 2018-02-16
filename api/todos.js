@@ -1,6 +1,11 @@
-import Appbase from 'appbase-js'; // installed alongside reactivesearch-native
-
 import CONFIG from './../constants/Config';
+
+const getHeaders = (accessToken) => ({
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${accessToken}`
+});
+
+const logger = message => console.log(message);
 
 class TodoModel {
   constructor(key) {
@@ -15,60 +20,64 @@ class TodoModel {
     });
   }
 
-  add(todo) {
-    const body = {
+  add(todo, screenProps) {
+    if (!screenProps.accessToken) {
+      console.log('Access Token not present');
+      return;
+    }
+    const body = JSON.stringify({
       title: todo.title,
-      completed: todo.completed,
-      createdAt: Date.now(),
-    };
+      name: screenProps.name,
+      avatar: screenProps.avatar
+    });
 
-    this.appbaseRef
-      .index({
-        type: CONFIG.type,
-        body,
-      })
-      .on('data', (response) => {
-        console.log('@api - add', response);
-      })
-      .on('error', (error) => {
-        console.error('@api - add', error);
-      });
+    fetch(CONFIG.server, {
+      method: 'POST',
+      headers: getHeaders(screenProps.accessToken),
+      body
+    })
+      .then(res => res.json())
+      .then(logger)
+      .catch(logger);
   }
 
-  update = (editedTodo) => {
-    const { _id, touched, ...todo } = editedTodo;
+  update = (todo, screenProps) => {
+    if (!screenProps.accessToken) {
+      console.log('Access Token not present');
+      return;
+    }
+    const body = JSON.stringify({
+        completed: todo.completed,
+        id: todo._id
+    });
 
-    this.appbaseRef
-      .update({
-        type: CONFIG.type,
-        id: _id,
-        body: {
-          doc: {
-            title: todo.title,
-            completed: todo.completed,
-          },
-        },
-      })
-      .on('data', (response) => {
-        console.log('@api - update', response);
-      })
-      .on('error', (error) => {
-        console.error('@api - update', error);
-      });
+    fetch(CONFIG.server, {
+      method: 'PUT',
+      headers: getHeaders(screenProps.accessToken),
+      body
+    })
+      .then(res => res.json())
+      .then(logger)
+      .catch(logger);
   };
 
-  destroy = (todo) => {
-    this.appbaseRef
-      .delete({
-        type: CONFIG.type,
-        id: todo._id,
-      })
-      .on('data', (response) => {
-        console.log('@api - destroy: ', response);
-      })
-      .on('error', (error) => {
-        console.error('@api - destroy: ', error);
-      });
+  destroy = (todo, screenProps) => {
+    if (!screenProps.accessToken) {
+      console.log('Access Token not present');
+      return;
+    }
+    const body = JSON.stringify({
+      id: todo._id
+    });
+
+    fetch(CONFIG.server, {
+      method: 'DELETE',
+      headers: getHeaders(screenProps.accessToken),
+      body
+    })
+      .then(res => res.json())
+      .then(logger)
+      .catch(logger);
   };
 }
 

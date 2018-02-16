@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
-import { View, CheckBox, Body, Icon } from 'native-base';
+import { View, CheckBox, Body, Icon, Thumbnail } from 'native-base';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,7 +35,7 @@ class TodoItem extends Component {
     propAction({
       ...todo,
       completed: !todo.completed,
-    });
+    }, this.props.screenProps);
   };
 
   setStateUtil = (property, value = undefined) => {
@@ -86,8 +86,9 @@ class TodoItem extends Component {
               </Text>
             </Body>
           </TouchableOpacity>
+          <Thumbnail source={{ uri: todo.avatar }} />
           <TouchableOpacity
-            onPress={() => onDelete(todo)}
+            onPress={() => onDelete(todo, this.props.screenProps)}
             style={{ paddingLeft: 25, paddingRight: 15 }}
           >
             <Icon

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, StyleSheet, FlatList, StatusBar, Button, Alert } from 'react-native';
+import { ScrollView, StyleSheet, FlatList, StatusBar, Button, Alert, Platform } from 'react-native';
 import { View } from 'native-base';
 import { ReactiveList } from '@appbaseio/reactivesearch-native';
 import Auth0 from 'react-native-auth0';
@@ -61,7 +61,12 @@ export default class TodosContainer extends React.Component {
         data={filteredData || []}
         keyExtractor={item => item._id}
         renderItem={({ item: todo }) => (
-          <TodoItem todo={todo} onUpdate={this.api.update} onDelete={this.api.destroy} />
+          <TodoItem
+            todo={todo}
+            onUpdate={this.api.update}
+            onDelete={this.api.destroy}
+            screenProps={this.props.screenProps}
+          />
         )}
       />
     );
@@ -83,27 +88,23 @@ export default class TodosContainer extends React.Component {
   };
 
   render() {
+    const { accessToken, handleLogin, handleLogout } = this.props.screenProps;
+    const isAndroid = Platform.OS === 'android';
     return (
       <View style={{ flex: 1 }}>
         <Header />
-        <StatusBar backgroundColor={COLORS.primary} barStyle="dark-content" />
+        {isAndroid ? (
+          <StatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
+        ) : (
+          <StatusBar backgroundColor={COLORS.primary} barStyle="dark-content" />
+        )}
         <ScrollView>
           <Button
-            title="Login"
-            onPress={() => {
-              auth0
-                .webAuth
-                .authorize({scope: 'openid profile email', audience: 'https://divyanshu.auth0.com/userinfo'})
-                .then(credentials =>
-                  // Successfully authenticated
-                  // Store the accessToken
-                  auth0
-                    .auth
-                    .userInfo({token: credentials.accessToken})
-                    .then(console.log)
-                    .catch(console.error)
-                )
-                .catch(error => console.log(error));
+            title={accessToken ? 'Logout' : 'Login to modify'}
+            onPress={accessToken ? handleLogout : handleLogin}
+            style={{
+              marginTop: 10,
+              marginBottom: 10
             }}
           />
           <ReactiveList
@@ -124,7 +125,7 @@ export default class TodosContainer extends React.Component {
               <AddTodo
                 onAdd={(todo) => {
                   this.setState({ addingTodo: false });
-                  this.api.add(todo);
+                  this.api.add(todo, this.props.screenProps);
                 }}
                 onCancelDelete={() => this.setState({ addingTodo: false })}
                 onBlur={() => this.setState({ addingTodo: false })}
