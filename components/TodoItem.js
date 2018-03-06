@@ -38,12 +38,6 @@ class TodoItem extends Component {
     }, this.props.screenProps);
   };
 
-  setStateUtil = (property, value = undefined) => {
-    this.setState({
-      [property]: value,
-    });
-  };
-
   render() {
     const { todo, onUpdate, onDelete } = this.props;
 
@@ -67,7 +61,10 @@ class TodoItem extends Component {
               flexDirection: 'row',
             }}
           >
-            <CheckBox checked={todo.completed} />
+            <CheckBox
+              checked={todo.completed}
+              onPress={() => this.onTodoItemToggle(todo, onUpdate)}
+            />
             <Body
               style={{
                 flex: 1,

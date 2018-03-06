@@ -1,8 +1,8 @@
 import React from 'react';
-import RootNavigation from './components/RootNavigation';
+import RootComponent from './components/RootComponent';
 
 export default class App extends React.Component {
   render() {
-    return <RootNavigation />;
+    return <RootComponent />;
   }
 }

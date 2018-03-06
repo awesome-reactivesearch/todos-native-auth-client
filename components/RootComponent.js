@@ -1,6 +1,5 @@
 import React from 'react';
 import { StatusBar, Platform } from 'react-native';
-import { StackNavigator } from 'react-navigation';
 import { Container } from 'native-base';
 import { ReactiveBase } from '@appbaseio/reactivesearch-native';
 import Auth0 from 'react-native-auth0';
@@ -11,13 +10,7 @@ import CONFIG from '../constants/Config';
 import COLORS from '../constants/Colors';
 import MainTabNavigator from './MainTabNavigator';
 
-const RootStackNavigator = StackNavigator({
-  Main: {
-    screen: MainTabNavigator,
-  },
-});
-
-export default class RootNavigator extends React.Component {
+export default class RootComponent extends React.Component {
   state = {
     accessToken: null,
     avatar: null,
@@ -58,7 +51,7 @@ export default class RootNavigator extends React.Component {
     return (
       <ReactiveBase app={CONFIG.app} credentials={CONFIG.credentials} type={CONFIG.type}>
         <Container>
-          <RootStackNavigator
+          <MainTabNavigator
             screenProps={{
               accessToken: this.state.accessToken,
               avatar: this.state.avatar,
