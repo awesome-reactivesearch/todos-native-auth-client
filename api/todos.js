@@ -8,18 +8,6 @@ const getHeaders = (accessToken) => ({
 const logger = message => console.log(message);
 
 class TodoModel {
-  constructor(key) {
-    this.key = key;
-    this.todos = [];
-    this.onChanges = [];
-    this.appbaseRef = new Appbase({
-      url: CONFIG.url,
-      app: CONFIG.app,
-      credentials: CONFIG.credentials,
-      type: CONFIG.type,
-    });
-  }
-
   add(todo, screenProps) {
     if (!screenProps.accessToken) {
       console.log('Access Token not present');
